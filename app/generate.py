@@ -9,7 +9,7 @@ import os
 
 bootstrap_servers = os.environ.get('KAFKA_BOOTSTRAP_SERVERS')
 topic_name = os.environ.get('KAFKA_TOPIC_NAME')
-topic_config = os.environ.get('KAFKA_TOPIC_RETENTION_MS')
+topic_config =  {'retention.ms': str(os.environ.get('KAFKA_TOPIC_RETENTION_MS'))}
 num_partitions = 1
 replication_factor = 1
 
@@ -22,7 +22,7 @@ def wait_for_kafka(bootstrap_servers):
             print('Kafka broker is available')
             break
         except NodeNotReadyError:
-            print(f'Waiting for node to become available...')
+            print('Waiting for node to become available...')
             time.sleep(1)
 
 def create_topic_if_not_exists():
@@ -30,7 +30,7 @@ def create_topic_if_not_exists():
         admin_client = KafkaAdminClient(bootstrap_servers=bootstrap_servers)
         topic_list = admin_client.list_topics()
         if topic_name not in topic_list:
-            topic = NewTopic(name=topic_name, num_partitions=num_partitions, replication_factor=replication_factor, config=topic_config)
+            topic = NewTopic(name=topic_name, num_partitions=num_partitions, replication_factor=replication_factor, topic_configs=topic_config)
             admin_client.create_topics(new_topics=[topic], validate_only=False)
             print(f'Created topic: {topic_name}')
         admin_client.close()
