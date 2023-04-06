@@ -16,4 +16,4 @@ This will populate the topic 'traffic' with fake internet traffic. The topic ret
 
 If you would like to inspect the data via kcat, one way is to add an /etc/hosts entry:
 - Alter /etc/hosts to add `127.0.0.1 kafka`
-- Run kcat as normal against using `localhost:9092` as the broker.
+- Run kcat as normal using localhost as the broker `kcat -L -b localhost:9092`.
