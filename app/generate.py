@@ -46,10 +46,11 @@ def generate_traffic():
     """
     flags = [0, 1, 1]  # bias towards slowloris style attacks 
     o = {}
-    o['source_ip'] = fake.ipv4() 
-    o['destination_ip'] = "10.1.1.{}".format(random.randint(1, 255))
     o['bytes_sent'] = random.randint(1000, 1000000)
     o['timestamp'] = fake.date_time_this_month(before_now=True, after_now=False).strftime("%Y-%m-%d %H:%M:%S")
+    o['ip'] = {}
+    o['ip']['source_ip'] = fake.ipv4() 
+    o['ip']['dest_ip'] = "10.1.1.{}".format(random.randint(1, 255)) 
     o['flags'] = {}
     o['flags']['tcp_flags_ack'] = choice(flags)
     o['flags']['tcp_flags_reset'] = choice(flags)
@@ -63,7 +64,9 @@ def generate_bad_user_login():
     o = {}
     o['msg'] = "Invalid user login attempt: {}".format(choice(users))
     o['port'] = fake.port_number()
-    o['ip'] = fake.ipv4() 
+    o['ip'] = {}
+    o['ip']['source_ip'] = fake.ipv4() 
+    o['ip']['dest_ip'] = "10.1.1.{}".format(random.randint(1, 255))
     return o
 
 def generate_bad_password_attempt():
@@ -74,7 +77,9 @@ def generate_bad_password_attempt():
     o = {}
     o['msg'] = "Bad password for user: {}".format(choice(users))
     o['port'] = fake.port_number()
-    o['ip'] = fake.ipv4() 
+    o['ip'] = {}
+    o['ip']['source_ip'] = fake.ipv4() 
+    o['ip']['dest_ip'] = "10.1.1.{}".format(random.randint(1, 255)) 
     return o 
 
 def main():
