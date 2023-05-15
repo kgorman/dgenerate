@@ -85,7 +85,13 @@ def main():
                 value_serializer=lambda m: json.dumps(m).encode('ascii')
     )
     while True:
-        fns = [generate_traffic, generate_bad_user_login, generate_bad_password_attempt]
+        fns = [generate_traffic, 
+               generate_bad_user_login, 
+               generate_bad_password_attempt,
+               generate_traffic,
+               generate_traffic,
+               generate_traffic,
+               generate_traffic]
         record = choice(fns)()
         try:
             producer.send(topic_name, record)
