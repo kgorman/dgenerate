@@ -44,14 +44,15 @@ def generate_traffic():
     """
     Generates a random internet traffic record using Faker.
     """
-    flags = [0, 1]
+    flags = [0, 1, 1]  # bias towards slowloris style attacks 
     o = {}
     o['source_ip'] = fake.ipv4() 
     o['destination_ip'] = "10.1.1.{}".format(random.randint(1, 255))
     o['bytes_sent'] = random.randint(1000, 1000000)
     o['timestamp'] = fake.date_time_this_month(before_now=True, after_now=False).strftime("%Y-%m-%d %H:%M:%S")
-    o['tcp_flags_ack'] = choice(flags)
-    o['tcp_flags_reset'] = choice(flags)
+    o['flags'] = {}
+    o['flags']['tcp_flags_ack'] = choice(flags)
+    o['flags']['tcp_flags_reset'] = choice(flags)
     return o
 
 def generate_login_attempt():
@@ -60,8 +61,7 @@ def generate_login_attempt():
     """
     users = ['Postgres', 'MySQL', 'FTPUser', 'Root', 'smbuser', 'ubuntu']
     o = {}
-    o['msg'] = "Invalid user login"
-    o['user'] = choice(users) 
+    o['msg'] = "Invalid user login attempt: {}".format(choice(users))
     o['port'] = fake.port_number()
     o['ip'] = fake.ipv4() 
     return o
