@@ -55,7 +55,7 @@ def generate_traffic():
     o['flags']['tcp_flags_reset'] = choice(flags)
     return o
 
-def generate_login_attempt():
+def generate_bad_user_login():
     """
     Generates a login attempt
     """
@@ -66,6 +66,17 @@ def generate_login_attempt():
     o['ip'] = fake.ipv4() 
     return o
 
+def generate_bad_password_attempt():
+    """
+    Generate a bad password attempt
+    """
+    users = ['Postgres', 'MySQL', 'FTPUser', 'Root', 'smbuser', 'ubuntu']
+    o = {}
+    o['msg'] = "Bad password for user: {}".format(choice(users))
+    o['port'] = fake.port_number()
+    o['ip'] = fake.ipv4() 
+    return o 
+
 def main():
     wait_for_kafka(bootstrap_servers)
     create_topic_if_not_exists()
@@ -74,7 +85,7 @@ def main():
                 value_serializer=lambda m: json.dumps(m).encode('ascii')
     )
     while True:
-        fns = [generate_traffic, generate_login_attempt]
+        fns = [generate_traffic, generate_bad_user_login, generate_bad_password_attempt]
         record = choice(fns)()
         try:
             producer.send(topic_name, record)
