@@ -6,6 +6,7 @@ import json
 import random
 import time
 import os
+from random import choice
 
 bootstrap_servers = os.environ.get('KAFKA_BOOTSTRAP_SERVERS')
 topic_name = os.environ.get('KAFKA_TOPIC_NAME')
@@ -39,23 +40,30 @@ def create_topic_if_not_exists():
     except NodeNotReadyError:
         print("Node is not ready yet")
 
-def generate_ip_address():
-    """
-    Generates a random IP address using Faker.
-    """
-    return fake.ipv4()
-
 def generate_traffic():
     """
     Generates a random internet traffic record using Faker.
     """
+    flags = [0, 1]
     o = {}
-    o['source_ip'] = generate_ip_address()
-    o['destination_ip'] = generate_ip_address()
+    o['source_ip'] = fake.ipv4() 
+    o['destination_ip'] = "10.1.1.{}".format(random.randint(1, 255))
     o['bytes_sent'] = random.randint(1000, 1000000)
     o['timestamp'] = fake.date_time_this_month(before_now=True, after_now=False).strftime("%Y-%m-%d %H:%M:%S")
-    o['tcp_flags_ack'] = 0
-    o['tcp_flags_reset'] = 0
+    o['tcp_flags_ack'] = choice(flags)
+    o['tcp_flags_reset'] = choice(flags)
+    return o
+
+def generate_login_attempt():
+    """
+    Generates a login attempt
+    """
+    users = ['Postgres', 'MySQL', 'FTPUser', 'Root', 'smbuser', 'ubuntu']
+    o = {}
+    o['msg'] = "Invalid user login"
+    o['user'] = choice(users) 
+    o['port'] = fake.port_number()
+    o['ip'] = fake.ipv4() 
     return o
 
 def main():
@@ -66,7 +74,8 @@ def main():
                 value_serializer=lambda m: json.dumps(m).encode('ascii')
     )
     while True:
-        record = generate_traffic()
+        fns = [generate_traffic, generate_login_attempt]
+        record = choice(fns)()
         try:
             producer.send(topic_name, record)
             producer.flush()
