@@ -40,6 +40,22 @@ def create_topic_if_not_exists():
     except NodeNotReadyError:
         print("Node is not ready yet")
 
+def generate_bad_traffic():
+    """
+    Generates a fake ddos attack (uses the same IP)
+    """
+    flags = [0, 1, 1]  # bias towards slowloris style attacks 
+    o = {}
+    o['bytes_sent'] = random.randint(1000, 1000000)
+    o['timestamp'] = fake.date_time_this_month(before_now=True, after_now=False).strftime("%Y-%m-%d %H:%M:%S")
+    o['ip'] = {}
+    o['ip']['source_ip'] = "100.1.1.5"
+    o['ip']['dest_ip'] = "10.1.1.{}".format(random.randint(1, 255)) 
+    o['flags'] = {}
+    o['flags']['tcp_flags_ack'] = 1
+    o['flags']['tcp_flags_reset'] = 1
+    return o
+
 def generate_traffic():
     """
     Generates a random internet traffic record using Faker.
@@ -91,12 +107,13 @@ def main():
     )
     while True:
         fns = [generate_traffic, 
+               generate_bad_traffic,
                generate_bad_user_login, 
                generate_bad_password_attempt,
                generate_traffic,
                generate_traffic,
-               generate_traffic,
-               generate_traffic]
+               generate_bad_traffic
+        ]
         record = choice(fns)()
         try:
             producer.send(topic_name, record)
