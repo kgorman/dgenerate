@@ -40,6 +40,17 @@ def create_topic_if_not_exists():
     except NodeNotReadyError:
         print("Node is not ready yet")
 
+def generate_bad_flag_object():
+    """
+    Generates a random internet traffic object, but without much info (example of simple data structure)
+    """
+    o = {}
+    o['bytes_sent'] = random.randint(1000, 1000000)
+    o['timestamp'] = fake.date_time_this_month(before_now=True, after_now=False).strftime("%Y-%m-%d %H:%M:%S")
+    o['ip'] = fake.ipv4() 
+    o['flags'] = 9
+    return o 
+
 def generate_bad_traffic():
     """
     Generates a fake ddos attack (uses the same IP)
@@ -111,7 +122,8 @@ def main():
                generate_bad_password_attempt,
                generate_traffic,
                generate_traffic,
-               generate_bad_traffic
+               generate_bad_traffic,
+               generate_bad_flag_object
         ]
         record = choice(fns)()
         try:
@@ -121,7 +133,7 @@ def main():
         except NoBrokersAvailable:
             print(f'No brokers available. Waiting...')
             time.sleep(5)
-        time.sleep(1)  
+        time.sleep(.3)  
 
 if __name__ == "__main__":
     main()

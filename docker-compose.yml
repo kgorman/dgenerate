@@ -36,7 +36,7 @@ services:
     depends_on:
       - kafka
       - zookeeper
-    command: sh -c "/usr/local/bin/python -m pip install --upgrade pip; pip install -r requirements.txt ; python generate.py"
+    command: sh -c "/bin/sleep 20; /usr/local/bin/python -m pip install --upgrade pip; pip install -r requirements.txt ; python generate.py"
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_TOPIC_NAME: traffic
