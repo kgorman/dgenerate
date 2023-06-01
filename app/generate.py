@@ -48,7 +48,7 @@ def generate_bad_traffic():
     o['bytes_sent'] = random.randint(1000, 1000000)
     o['timestamp'] = fake.date_time_this_month(before_now=True, after_now=False).strftime("%Y-%m-%d %H:%M:%S")
     o['ip'] = {}
-    o['ip']['source_ip'] = "100.1.1.5"
+    o['ip']['source_ip'] = "192.12.1.{}".format(random.randint(5, 6)) 
     o['ip']['dest_ip'] = "10.1.1.{}".format(random.randint(1, 255)) 
     o['flags'] = {}
     o['flags']['tcp_flags_ack'] = 1
