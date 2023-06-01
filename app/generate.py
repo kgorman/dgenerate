@@ -44,7 +44,6 @@ def generate_bad_traffic():
     """
     Generates a fake ddos attack (uses the same IP)
     """
-    flags = [0, 1, 1]  # bias towards slowloris style attacks 
     o = {}
     o['bytes_sent'] = random.randint(1000, 1000000)
     o['timestamp'] = fake.date_time_this_month(before_now=True, after_now=False).strftime("%Y-%m-%d %H:%M:%S")
